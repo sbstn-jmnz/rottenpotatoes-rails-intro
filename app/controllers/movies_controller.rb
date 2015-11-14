@@ -12,20 +12,18 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.ratings
-    params[:sort_by] ? session[:sort_by] = params[:sort_by] : session[:sort_by] 
+    params[:sort_by] ? session[:sort_by] = params[:sort_by] : redirect_to movies_path session[:sort_by] 
     params[:ratings] ? session[:ratings] = params[:ratings] : session[:ratings] = session[:ratings] || Movie.ratings 
     
     
     if session[:ratings] || session[:sort_by]
       ratings =[]
       session[:ratings].each {|k,v| ratings << k}
-
         @all_ratings.each do |k,v| 
           if !ratings.include? k
           @all_ratings[k] = false
           end
         end 
-
      case session[:sort_by]
       when "title"
       @movies = Movie.where(rating: ratings).order(:title)
