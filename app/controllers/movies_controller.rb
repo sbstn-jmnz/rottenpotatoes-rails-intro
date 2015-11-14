@@ -13,10 +13,10 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.ratings
     params[:sort_by] ? session[:sort_by] = params[:sort_by] : session[:sort_by] 
-    params[:ratings] ? session[:ratings] = params[:ratings] : session[:ratings]
+    params[:ratings] ? session[:ratings] = params[:ratings] : session[:ratings] = session[:ratings] || Movie.ratings 
     
     
-    if session[:ratings]
+    if session[:ratings] || session[:sort_by]
       ratings =[]
       session[:ratings].each {|k,v| ratings << k}
 
