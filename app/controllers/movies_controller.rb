@@ -12,30 +12,35 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.ratings
-    case params[:sort_by]    
-    when "title"
-    @movies = Movie.order(:title)
-    @title = 'hilite'
-    @release = ''
-    when "release_date"
-    @movies = Movie.order(:release_date)
-    @title = ''
-    @release = 'hilite'
-    else
-      if params[:ratings]
+    params[:sort_by] ? session[:sort_by] = params[:sort_by] : session[:sort_by] 
+    params[:ratings] ? session[:ratings] = params[:ratings] : session[:ratings]  
+    
+    if session[:ratings]
       ratings =[]
-      params[:ratings].each {|k,v| ratings << k} 
-      @movies = Movie.where(rating: ratings)
-      @all_ratings.each do |k,v| 
-        if !ratings.include? k
-          @all_ratings[k] = false
-        end
+      session[:ratings].each {|k,v| ratings << k}
+      case session[:sort_by]
+      when "title"
+      @movies = Movie.where(rating: ratings).order(:title)
+      @title = 'hilite'
+      @release = ''
+      when "release_date"
+      @movies = Movie.where(rating: ratings).order(:release_date)
+      @title = ''
+      @release = 'hilite'
+      else #when there is no params[:sort_by]       
+        @movies = Movie.where(rating: ratings)
       end 
-      else  
+    else  #when there is no params[:ratings]
       @movies = Movie.all
-      end
     end
-  end
+         
+       @all_ratings.each do |k,v| 
+          if !ratings.include? k
+          @all_ratings[k] = false
+          end
+        end 
+      
+    end
 
   def new
     # default: render 'new' template
