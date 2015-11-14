@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.ratings
     case params[:sort_by]    
     when "title"
     @movies = Movie.order(:title)
@@ -20,8 +21,19 @@ class MoviesController < ApplicationController
     @movies = Movie.order(:release_date)
     @title = ''
     @release = 'hilite'
-    else  
-    @movies = Movie.all
+    else
+      if params[:ratings]
+      ratings =[]
+      params[:ratings].each {|k,v| ratings << k} 
+      @movies = Movie.where(rating: ratings)
+      @all_ratings.each do |k,v| 
+        if !ratings.include? k
+          @all_ratings[k] = false
+        end
+      end 
+      else  
+      @movies = Movie.all
+      end
     end
   end
 
