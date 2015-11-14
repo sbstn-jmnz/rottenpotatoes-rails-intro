@@ -14,11 +14,11 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.ratings
     params[:sort_by] ? session[:sort_by] = params[:sort_by] : session[:sort_by] 
     params[:ratings] ? session[:ratings] = params[:ratings] : session[:ratings]  
+    ratings =[]
+    session[:ratings].each {|k,v| ratings << k}
     
     if session[:ratings]
-      ratings =[]
-      session[:ratings].each {|k,v| ratings << k}
-      case session[:sort_by]
+     case session[:sort_by]
       when "title"
       @movies = Movie.where(rating: ratings).order(:title)
       @title = 'hilite'
